@@ -11,6 +11,51 @@
         darkMode: 'class',
       }
     </script>
+    <style>
+      /* For Webkit browsers (Chrome, Safari) */
+      .modern-scrollbar::-webkit-scrollbar {
+        width: 8px; /* Thinner scrollbar */
+      }
+
+      .modern-scrollbar::-webkit-scrollbar-track {
+        background: rgba(254, 243, 199, 0.5); /* amber-100/50 for light mode */
+        border-radius: 10px;
+      }
+
+      .modern-scrollbar::-webkit-scrollbar-thumb {
+        background: #F4C430; /* Main Saffron color */
+        border-radius: 10px;
+        border: 2px solid rgba(254, 243, 199, 0.5); /* Creates a padding effect with track color */
+      }
+
+      .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #EAA900; /* Darker saffron on hover */
+      }
+
+      /* Dark mode styles for Webkit */
+      .dark .modern-scrollbar::-webkit-scrollbar-track {
+        background: #382d1f; /* Dark background for track */
+      }
+
+      .dark .modern-scrollbar::-webkit-scrollbar-thumb {
+        background: #d97706; /* amber-600 */
+        border: 2px solid #382d1f; /* Padding effect with track color */
+      }
+      
+      .dark .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #f59e0b; /* amber-500 */
+      }
+
+      /* For Firefox */
+      .modern-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #F4C430 rgba(254, 243, 199, 0.5); /* thumb track */
+      }
+
+      .dark .modern-scrollbar {
+         scrollbar-color: #d97706 #382d1f; /* thumb track */
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {

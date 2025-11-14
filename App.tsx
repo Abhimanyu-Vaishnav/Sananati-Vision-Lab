@@ -1,23 +1,17 @@
-
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppMode } from './types';
 import ImageEditor from './components/ImageEditor';
 import ImageAnalyzer from './components/ImageAnalyzer';
 import TimeTravelBooth from './components/TimeTravelBooth';
 import ImageCreator from './components/ImageCreator';
 import { CreatorIcon, EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon, SettingsIcon } from './components/icons';
-// FIX: SettingsContext is no longer used directly in this component.
 import { SettingsProvider } from './contexts/SettingsContext';
 import SettingsModal from './components/SettingsModal';
-// FIX: ApiKeyPrompt is no longer used as API key is now handled by environment variables.
-// import ApiKeyPrompt from './components/ApiKeyPrompt';
 
 const AppContainer: React.FC = () => {
     const [mode, setMode] = useState<AppMode>(AppMode.Creator);
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    // FIX: Removed useContext as settings.apiKey check is no longer needed.
-    // const { settings } = useContext(SettingsContext);
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -54,19 +48,26 @@ const AppContainer: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#FFF8E1] dark:bg-[#1C160C] text-[#1C160C] dark:text-white font-sans transition-colors duration-300">
             <div className="container mx-auto px-4 py-8">
-                <header className="relative flex justify-between items-center mb-8">
-                    <button onClick={() => setIsSettingsOpen(true)} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Settings">
-                        <SettingsIcon />
-                    </button>
-                    <div className="text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                        <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
+                {/* FIX: Replaced absolute positioning with a responsive 3-column flex layout to prevent overlap on small screens. */}
+                <header className="flex justify-between items-center mb-8">
+                    <div className="flex-1">
+                        <button onClick={() => setIsSettingsOpen(true)} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Settings">
+                            <SettingsIcon />
+                        </button>
+                    </div>
+                    <div className="text-center px-2 sm:px-4">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
                             Sanatani Vision Lab
                         </h1>
-                        <p className="mt-2 text-amber-900/80 dark:text-slate-400">Create, edit, and analyze images with the power of AI.</p>
+                        <p className="mt-2 text-xs sm:text-base text-amber-900/80 dark:text-slate-400">
+                            Create, edit, and analyze images with the power of AI.
+                        </p>
                     </div>
-                    <button onClick={toggleTheme} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Toggle Theme">
-                        {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-                    </button>
+                    <div className="flex-1 flex justify-end">
+                        <button onClick={toggleTheme} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Toggle Theme">
+                            {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+                        </button>
+                    </div>
                 </header>
 
                 <div className="w-full max-w-4xl mx-auto bg-white/60 dark:bg-[#2a2216]/50 rounded-xl shadow-2xl border border-amber-300 dark:border-amber-900/50 backdrop-blur-sm">
@@ -87,7 +88,6 @@ const AppContainer: React.FC = () => {
                         ))}
                     </nav>
 
-                    {/* FIX: Removed ApiKeyPrompt and blur effect as API key is now handled by environment variables. */}
                     <main className="relative">
                         {renderContent()}
                     </main>

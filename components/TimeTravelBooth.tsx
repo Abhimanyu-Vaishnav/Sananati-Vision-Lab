@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useContext } from 'react';
 import ImageUploader from './ImageUploader';
 import Spinner from './Spinner';
@@ -24,6 +23,71 @@ const SCENES = [
     "Studying astronomy at Nalanda University",
     "Witnessing the splendor of the Vijayanagara Empire",
     "At the serene Golden Temple in Amritsar",
+    "Participating in the Kumbh Mela at Prayagraj",
+    "Watching a Kathakali performance in a Kerala temple",
+    "A scholarly debate in the court of Emperor Akbar",
+    "In the audience for a sermon by Adi Shankaracharya",
+    "Exploring the rock-cut caves of Ajanta and Ellora",
+    "Witnessing the construction of the Taj Mahal",
+    "A philosophical discourse with sages in the Himalayas",
+    "Sailing with ancient Indian mariners to Southeast Asia",
+    "Attending a grand feast in a Rajput fort in Chittorgarh",
+    "Learning martial arts at a Kalaripayattu school",
+    "Presenting a poem in the court of Krishnadevaraya",
+    "A traditional wedding ceremony during the Mauryan period",
+    "Forging Wootz steel in a South Indian workshop",
+    "Trading pearls in the ancient port of Muziris",
+    "A procession during the Ratha Yatra in Puri",
+    "Listening to Tansen perform for Emperor Akbar",
+    "Debating philosophy at the ancient university of Taxila",
+    "Celebrating Pongal in a rural Tamil village",
+    "A prayer session at the Meenakshi Temple in Madurai",
+    "Joining a merchant caravan on the Grand Trunk Road",
+    "Witnessing the coronation of Samudragupta",
+    "At the Iron Pillar of Delhi when it was first erected",
+    "A Durga Puja celebration in ancient Bengal",
+    "Exploring the magnificent ruins of Hampi",
+    "A quiet evening on the spiritual ghats of Varanasi",
+    "Participating in a Soma ritual in the Vedic period",
+    "A summit meeting between Maratha sardars",
+    "Crafting intricate jewelry in ancient Jaipur",
+    "A theatrical performance of a Kalidasa play",
+    "Witnessing the churning of the ocean (Samudra manthan)",
+    "At the celestial wedding of Shiva and Parvati in the Himalayas",
+    "In the divine court of Indra in Svarga",
+    "Flying in a Vimana over ancient Lanka",
+    "In the hermitage of Rishi Kanva with Shakuntala",
+    "Helping build the Ram Setu bridge to Lanka",
+    "A secret meeting with Chanakya to discuss statecraft",
+    "A grand durbar in the opulent Mysore Palace",
+    "Observing the night sky with astronomer Aryabhata",
+    "A village panchayat meeting under a large banyan tree",
+    "Watching a traditional puppet show (Kathputli) in Rajasthan",
+    "Celebrating Ganesh Chaturthi with a grand procession in Maharashtra",
+    "On a strenuous pilgrimage to the Badrinath temple",
+    "At the court of King Harsha of Kannauj",
+    "Trading cotton textiles in the Indus Valley port city of Lothal",
+    "A Sufi gathering with qawwali music at a Delhi dargah",
+    "Witnessing the historic Battle of Plassey",
+    "A gathering of Bhakti poets like Kabir or Mirabai",
+    "The inauguration ceremony of the Brihadeeswarar Temple in Thanjavur",
+    "A quiet monastery in the mountains of Ladakh",
+    "Inside the vibrant court of the Satavahana dynasty",
+    "Celebrating Onam with a grand feast in Kerala",
+    "Witnessing a Jallikattu event in ancient Tamil Nadu",
+    "In the library of the Vikramshila University",
+    "A naval expedition of the Chola dynasty",
+    "Exploring the ancient city of Pataliputra",
+    "A classical music concert in the city of Tanjore",
+    "In the midst of the Indian Rebellion of 1857",
+    "Attending the court of the Sikh Emperor Ranjit Singh",
+    "Celebrating the festival of Baisakhi in Punjab",
+    "A diplomatic meeting with Greek ambassadors in the Mauryan court",
+    "Exploring the architectural marvels of Fatehpur Sikri",
+    "A monsoon evening in a Malabar coastal village",
+    "Witnessing a traditional Theyyam ritual in Kerala",
+    "In the lush gardens of Shalimar Bagh in Kashmir",
+    "A polo match in ancient Manipur",
 ];
 
 const TimeTravelBooth: React.FC = () => {
@@ -82,7 +146,7 @@ const TimeTravelBooth: React.FC = () => {
                         placeholder="Search destinations..."
                         className="w-full p-2 bg-white dark:bg-[#2a2216] border border-amber-300 dark:border-amber-800 rounded-lg text-[#1C160C] dark:text-slate-200 placeholder-amber-900/50 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#F4C430] focus:border-[#F4C430] transition"
                     />
-                    <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2">
+                    <div className="grid grid-cols-2 gap-3 max-h-48 overflow-y-auto pr-2 modern-scrollbar">
                          {filteredScenes.length > 0 ? (
                             filteredScenes.map((scene) => (
                                 <button
