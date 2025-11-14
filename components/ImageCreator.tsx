@@ -22,7 +22,8 @@ const ImageCreator: React.FC = () => {
         setGeneratedImage(null);
 
         try {
-            const generatedImageBase64 = await generateImage(settings.apiKey, prompt.trim());
+            // FIX: Removed apiKey from the function call as it's now handled by environment variables.
+            const generatedImageBase64 = await generateImage(prompt.trim(), settings.imageModel);
             setGeneratedImage(`data:image/png;base64,${generatedImageBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');

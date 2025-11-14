@@ -1,7 +1,7 @@
 
 import React, { useState, useContext, useEffect } from 'react';
 import { SettingsContext } from '../contexts/SettingsContext';
-import { AppSettings, AIProvider } from '../types';
+import { AppSettings, AIProvider, ImageModels, TextModels } from '../types';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -35,25 +35,14 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
         setLocalSettings(prev => ({ ...prev, [name]: value }));
     };
 
+    const selectClasses = "w-full p-2 bg-white dark:bg-[#382d1f] border border-amber-300 dark:border-amber-700 rounded-md text-[#1C160C] dark:text-slate-200 focus:ring-1 focus:ring-[#F4C430] focus:border-[#F4C430] transition";
+
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
             <div className="bg-[#FFF8E1] dark:bg-[#2a2216] rounded-xl shadow-2xl border border-amber-300 dark:border-amber-900/50 w-full max-w-md p-6" onClick={e => e.stopPropagation()}>
                 <h2 className="text-2xl font-bold text-amber-900 dark:text-slate-200 mb-4">Settings</h2>
                 <div className="space-y-4">
-                    <div>
-                        <label htmlFor="apiKey" className="block text-sm font-medium text-amber-800 dark:text-slate-400 mb-1">
-                            Your API Key
-                        </label>
-                        <input
-                            type="password"
-                            id="apiKey"
-                            name="apiKey"
-                            value={localSettings.apiKey}
-                            onChange={handleInputChange}
-                            placeholder="Enter your API key here"
-                            className="w-full p-2 bg-white dark:bg-[#382d1f] border border-amber-300 dark:border-amber-700 rounded-md text-[#1C160C] dark:text-slate-200 placeholder-amber-900/50 dark:placeholder-slate-500 focus:ring-1 focus:ring-[#F4C430] focus:border-[#F4C430] transition"
-                        />
-                    </div>
+                    {/* FIX: Removed API Key input field to adhere to guidelines. API key should be handled by environment variables. */}
                     <div>
                         <label htmlFor="provider" className="block text-sm font-medium text-amber-800 dark:text-slate-400 mb-1">
                             AI Provider
@@ -63,10 +52,42 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
                             name="provider"
                             value={localSettings.provider}
                             onChange={handleInputChange}
-                            className="w-full p-2 bg-white dark:bg-[#382d1f] border border-amber-300 dark:border-amber-700 rounded-md text-[#1C160C] dark:text-slate-200 focus:ring-1 focus:ring-[#F4C430] focus:border-[#F4C430] transition"
+                            className={selectClasses}
                         >
                             <option value={AIProvider.Gemini}>Google Gemini</option>
                             <option value={AIProvider.OpenAI} disabled>OpenAI (Coming Soon)</option>
+                        </select>
+                    </div>
+                     <div>
+                        <label htmlFor="imageModel" className="block text-sm font-medium text-amber-800 dark:text-slate-400 mb-1">
+                            Image Model (for Creator, Editor, Time-Travel)
+                        </label>
+                        <select
+                            id="imageModel"
+                            name="imageModel"
+                            value={localSettings.imageModel}
+                            onChange={handleInputChange}
+                            className={selectClasses}
+                        >
+                            {Object.entries(ImageModels).map(([id, name]) => (
+                                <option key={id} value={id}>{name}</option>
+                            ))}
+                        </select>
+                    </div>
+                     <div>
+                        <label htmlFor="textModel" className="block text-sm font-medium text-amber-800 dark:text-slate-400 mb-1">
+                            Analysis Model (for Image Analyzer)
+                        </label>
+                        <select
+                            id="textModel"
+                            name="textModel"
+                            value={localSettings.textModel}
+                            onChange={handleInputChange}
+                            className={selectClasses}
+                        >
+                            {Object.entries(TextModels).map(([id, name]) => (
+                                <option key={id} value={id}>{name}</option>
+                            ))}
                         </select>
                     </div>
                 </div>

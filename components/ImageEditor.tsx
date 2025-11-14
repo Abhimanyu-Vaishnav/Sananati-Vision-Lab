@@ -53,7 +53,8 @@ const ImageEditor: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(originalImage);
-            const editedImageBase64 = await editImage(settings.apiKey, base64Image, originalImage.type, finalPrompt);
+            // FIX: Removed apiKey from the function call as it's now handled by environment variables.
+            const editedImageBase64 = await editImage(base64Image, originalImage.type, finalPrompt, settings.imageModel);
             setEditedImage(`data:image/png;base64,${editedImageBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');

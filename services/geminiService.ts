@@ -13,18 +13,17 @@ export const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
-const getAi = (apiKey: string) => {
-    if (!apiKey) {
-        throw new Error("API Key is not set. Please add it in Settings.");
-    }
-    return new GoogleGenAI({ apiKey });
+// FIX: Refactored to use process.env.API_KEY as per guidelines.
+const getAi = () => {
+    return new GoogleGenAI({ apiKey: process.env.API_KEY });
 }
 
-export const generateImage = async (apiKey: string, prompt: string): Promise<string> => {
+// FIX: Removed apiKey parameter to align with new getAi function.
+export const generateImage = async (prompt: string, model: string): Promise<string> => {
     try {
-        const ai = getAi(apiKey);
+        const ai = getAi();
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image',
+            model,
             contents: {
                 parts: [
                     {
@@ -49,11 +48,12 @@ export const generateImage = async (apiKey: string, prompt: string): Promise<str
     }
 };
 
-export const editImage = async (apiKey: string, base64Image: string, mimeType: string, prompt: string): Promise<string> => {
+// FIX: Removed apiKey parameter to align with new getAi function.
+export const editImage = async (base64Image: string, mimeType: string, prompt: string, model: string): Promise<string> => {
     try {
-        const ai = getAi(apiKey);
+        const ai = getAi();
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image',
+            model,
             contents: {
                 parts: [
                     {
@@ -78,17 +78,19 @@ export const editImage = async (apiKey: string, base64Image: string, mimeType: s
             }
         }
         throw new Error("No image data found in response");
+    // FIX: Added curly braces to the catch block to fix syntax error and scope issues.
     } catch (error) {
         console.error("Error editing image:", error);
         throw new Error(`Failed to edit image. ${error instanceof Error ? error.message : ''}`);
     }
 };
 
-export const analyzeImage = async (apiKey: string, base64Image: string, mimeType: string, prompt: string): Promise<string> => {
+// FIX: Removed apiKey parameter to align with new getAi function.
+export const analyzeImage = async (base64Image: string, mimeType: string, prompt: string, model: string): Promise<string> => {
     try {
-        const ai = getAi(apiKey);
+        const ai = getAi();
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model,
             contents: {
                 parts: [
                     {

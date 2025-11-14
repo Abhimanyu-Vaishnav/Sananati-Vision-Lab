@@ -4,9 +4,11 @@ import { AppSettings, AIProvider } from '../types';
 
 const SETTINGS_STORAGE_KEY = 'sanatani-vision-lab-settings';
 
+// FIX: Removed apiKey from default settings as it's now handled by environment variables.
 const defaultSettings: AppSettings = {
-    apiKey: '',
     provider: AIProvider.Gemini,
+    imageModel: 'gemini-2.5-flash-image',
+    textModel: 'gemini-2.5-flash',
 };
 
 interface SettingsContextType {
@@ -28,7 +30,8 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
         try {
             const storedSettings = localStorage.getItem(SETTINGS_STORAGE_KEY);
             if (storedSettings) {
-                return JSON.parse(storedSettings);
+                // Merge stored settings with defaults to handle new fields gracefully
+                return { ...defaultSettings, ...JSON.parse(storedSettings) };
             }
         } catch (error) {
             console.error('Error reading settings from localStorage', error);

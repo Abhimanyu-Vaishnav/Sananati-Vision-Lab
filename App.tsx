@@ -6,15 +6,18 @@ import ImageAnalyzer from './components/ImageAnalyzer';
 import TimeTravelBooth from './components/TimeTravelBooth';
 import ImageCreator from './components/ImageCreator';
 import { CreatorIcon, EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon, SettingsIcon } from './components/icons';
-import { SettingsProvider, SettingsContext } from './contexts/SettingsContext';
+// FIX: SettingsContext is no longer used directly in this component.
+import { SettingsProvider } from './contexts/SettingsContext';
 import SettingsModal from './components/SettingsModal';
-import ApiKeyPrompt from './components/ApiKeyPrompt';
+// FIX: ApiKeyPrompt is no longer used as API key is now handled by environment variables.
+// import ApiKeyPrompt from './components/ApiKeyPrompt';
 
 const AppContainer: React.FC = () => {
     const [mode, setMode] = useState<AppMode>(AppMode.Creator);
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const { settings } = useContext(SettingsContext);
+    // FIX: Removed useContext as settings.apiKey check is no longer needed.
+    // const { settings } = useContext(SettingsContext);
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -84,11 +87,9 @@ const AppContainer: React.FC = () => {
                         ))}
                     </nav>
 
+                    {/* FIX: Removed ApiKeyPrompt and blur effect as API key is now handled by environment variables. */}
                     <main className="relative">
-                        {!settings.apiKey && <ApiKeyPrompt onOpenSettings={() => setIsSettingsOpen(true)} />}
-                        <div className={!settings.apiKey ? 'blur-sm pointer-events-none' : ''}>
-                            {renderContent()}
-                        </div>
+                        {renderContent()}
                     </main>
                 </div>
                  <footer className="text-center mt-8 text-amber-900/60 dark:text-slate-500 text-sm">

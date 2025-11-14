@@ -59,7 +59,8 @@ const TimeTravelBooth: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(userImage);
-            const resultBase64 = await editImage(settings.apiKey, base64Image, userImage.type, prompt);
+            // FIX: Removed apiKey from the function call as it's now handled by environment variables.
+            const resultBase64 = await editImage(base64Image, userImage.type, prompt, settings.imageModel);
             setGeneratedImage(`data:image/png;base64,${resultBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');

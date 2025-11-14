@@ -34,7 +34,8 @@ const ImageAnalyzer: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(imageToAnalyze);
-            const result = await analyzeImage(settings.apiKey, base64Image, imageToAnalyze.type, promptToUse);
+            // FIX: Removed apiKey from the function call as it's now handled by environment variables.
+            const result = await analyzeImage(base64Image, imageToAnalyze.type, promptToUse, settings.textModel);
             setAnalysis(result);
 
             const newEntry: AnalysisHistoryEntry = {
