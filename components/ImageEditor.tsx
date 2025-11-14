@@ -5,6 +5,7 @@ import Spinner from './Spinner';
 import ZoomableImage from './ZoomableImage';
 import { fileToBase64, editImage } from '../services/geminiService';
 import { SettingsContext } from '../contexts/SettingsContext';
+import { UndoIcon, RedoIcon, CloseIcon } from './icons';
 
 const QUICK_FILTERS = [
     { name: 'Grayscale', prompt: 'Convert the image to black and white grayscale.' },
@@ -24,6 +25,13 @@ const ImageEditor: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
+    // History state for undo/redo
+    const [history, setHistory] = useState<string[]>([]);
+    const [historyIndex, setHistoryIndex] = useState<number>(-1);
+
+    // Fullscreen state
+    const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
     // Text overlay state
     const [enableTextOverlay, setEnableTextOverlay] = useState<boolean>(false);
     const [textOverlay, setTextOverlay] = useState<string>('');
@@ -36,6 +44,17 @@ const ImageEditor: React.FC = () => {
         return originalImage ? URL.createObjectURL(originalImage) : null;
     }, [originalImage]);
 
+    const canUndo = historyIndex > 0;
+    const canRedo = historyIndex < history.length - 1;
+
+    const handleImageUpload = (file: File) => {
+        setOriginalImage(file);
+        setEditedImage(null);
+        setHistory([]);
+        setHistoryIndex(-1);
+        setError(null);
+    };
+
     const handleGenerate = async () => {
         if (!originalImage || !prompt.trim()) {
             setError('Please upload an image and provide an editing prompt.');
@@ -43,7 +62,6 @@ const ImageEditor: React.FC = () => {
         }
         setIsLoading(true);
         setError(null);
-        setEditedImage(null);
 
         let finalPrompt = prompt.trim();
         if (enableTextOverlay && textOverlay.trim()) {
@@ -53,13 +71,36 @@ const ImageEditor: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(originalImage);
-            // FIX: Removed apiKey from the function call as it's now handled by environment variables.
             const editedImageBase64 = await editImage(base64Image, originalImage.type, finalPrompt, settings.imageModel);
-            setEditedImage(`data:image/png;base64,${editedImageBase64}`);
+            const newImageSrc = `data:image/png;base64,${editedImageBase64}`;
+            setEditedImage(newImageSrc);
+
+            // Update history
+            const newHistory = history.slice(0, historyIndex + 1);
+            newHistory.push(newImageSrc);
+            setHistory(newHistory);
+            setHistoryIndex(newHistory.length - 1);
+
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleUndo = () => {
+        if (canUndo) {
+            const newIndex = historyIndex - 1;
+            setHistoryIndex(newIndex);
+            setEditedImage(history[newIndex]);
+        }
+    };
+
+    const handleRedo = () => {
+        if (canRedo) {
+            const newIndex = historyIndex + 1;
+            setHistoryIndex(newIndex);
+            setEditedImage(history[newIndex]);
         }
     };
 
@@ -72,7 +113,7 @@ const ImageEditor: React.FC = () => {
     return (
         <div className="p-4 md:p-6 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ImageUploader onImageUpload={setOriginalImage} imagePreviewUrl={originalImagePreview} title="1. Upload Original Image" />
+                <ImageUploader onImageUpload={handleImageUpload} imagePreviewUrl={originalImagePreview} title="1. Upload Original Image" />
                 <div className="w-full space-y-4">
                     <div>
                         <h3 className="text-lg font-semibold text-amber-900 dark:text-slate-300 mb-2">2. Describe Your Edit</h3>
@@ -134,13 +175,31 @@ const ImageEditor: React.FC = () => {
                             </div>
                         )}
                     </div>
-                     <button
-                        onClick={handleGenerate}
-                        disabled={isLoading || !originalImage || !prompt}
-                        className="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-black bg-[#F4C430] hover:bg-[#EAA900] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-amber-50 dark:focus:ring-offset-[#1C160C] focus:ring-[#F4C430] disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed transition"
-                    >
-                        {isLoading ? <Spinner /> : 'Generate Image'}
-                    </button>
+                    <div className="flex items-center gap-2">
+                         <button
+                            onClick={handleUndo}
+                            disabled={!canUndo || isLoading}
+                            className="p-2 rounded-md shadow-sm text-amber-800 dark:text-amber-200 bg-amber-100 hover:bg-amber-200 dark:bg-[#382d1f] dark:hover:bg-[#4a3c29] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-amber-50 dark:focus:ring-offset-[#1C160C] focus:ring-[#F4C430] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            aria-label="Undo"
+                        >
+                           <UndoIcon />
+                        </button>
+                        <button
+                            onClick={handleRedo}
+                            disabled={!canRedo || isLoading}
+                            className="p-2 rounded-md shadow-sm text-amber-800 dark:text-amber-200 bg-amber-100 hover:bg-amber-200 dark:bg-[#382d1f] dark:hover:bg-[#4a3c29] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-amber-50 dark:focus:ring-offset-[#1C160C] focus:ring-[#F4C430] disabled:opacity-50 disabled:cursor-not-allowed transition"
+                            aria-label="Redo"
+                        >
+                            <RedoIcon />
+                        </button>
+                         <button
+                            onClick={handleGenerate}
+                            disabled={isLoading || !originalImage || !prompt}
+                            className="flex-grow inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-black bg-[#F4C430] hover:bg-[#EAA900] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-amber-50 dark:focus:ring-offset-[#1C160C] focus:ring-[#F4C430] disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:cursor-not-allowed transition"
+                        >
+                            {isLoading ? <Spinner /> : 'Generate Image'}
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -152,13 +211,33 @@ const ImageEditor: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <h4 className="text-md font-medium text-center text-amber-900 dark:text-slate-400 mb-2">Original</h4>
-                            <ZoomableImage src={originalImagePreview} alt="Original image" />
+                            <ZoomableImage src={originalImagePreview} alt="Original image" onFullscreen={setFullscreenImage} />
                         </div>
                         <div>
                              <h4 className="text-md font-medium text-center text-amber-900 dark:text-slate-400 mb-2">Edited</h4>
-                            <ZoomableImage src={editedImage} alt="Edited result" />
+                            <ZoomableImage src={editedImage} alt="Edited result" onFullscreen={setFullscreenImage} />
                         </div>
                     </div>
+                </div>
+            )}
+            {fullscreenImage && (
+                <div 
+                    className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+                    onClick={() => setFullscreenImage(null)}
+                >
+                    <button 
+                        className="absolute top-4 right-4 text-white hover:text-amber-300 transition"
+                        onClick={() => setFullscreenImage(null)}
+                        aria-label="Close fullscreen view"
+                    >
+                        <CloseIcon />
+                    </button>
+                    <img 
+                        src={fullscreenImage} 
+                        alt="Fullscreen view" 
+                        className="max-w-[95vw] max-h-[95vh] object-contain"
+                        onClick={(e) => e.stopPropagation()}
+                    />
                 </div>
             )}
         </div>

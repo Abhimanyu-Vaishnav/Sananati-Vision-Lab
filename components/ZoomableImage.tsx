@@ -1,12 +1,14 @@
+
 import React, { useState, useRef, MouseEvent } from 'react';
-import { ZoomInIcon, ZoomOutIcon, ResetIcon, DownloadIcon } from './icons';
+import { ZoomInIcon, ZoomOutIcon, ResetIcon, DownloadIcon, FullscreenIcon } from './icons';
 
 interface ZoomableImageProps {
     src: string;
     alt: string;
+    onFullscreen?: (src: string) => void;
 }
 
-const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
+const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt, onFullscreen }) => {
     const [zoom, setZoom] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
@@ -57,9 +59,6 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
     
     const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 5));
     const handleZoomOut = () => {
-        // FIX: The original code `Math.max(prev => prev / 1.2, 1)` was incorrect.
-        // `Math.max` expects numbers, not a function.
-        // Use the `zoom` state variable to calculate the new zoom value.
         const newZoom = Math.max(zoom / 1.2, 1);
         if (newZoom === 1) {
             handleReset();
@@ -109,6 +108,9 @@ const ZoomableImage: React.FC<ZoomableImageProps> = ({ src, alt }) => {
                 <button onClick={handleZoomOut} className="p-1.5 text-white hover:bg-white/20 rounded-full transition" aria-label="Zoom Out"><ZoomOutIcon /></button>
                 <button onClick={handleReset} className="p-1.5 text-white hover:bg-white/20 rounded-full transition" aria-label="Reset Zoom"><ResetIcon /></button>
                 <div className="w-px h-5 bg-white/30 mx-1"></div>
+                {onFullscreen && (
+                    <button onClick={() => onFullscreen(src)} className="p-1.5 text-white hover:bg-white/20 rounded-full transition" aria-label="Fullscreen"><FullscreenIcon /></button>
+                )}
                 <button onClick={handleDownload} className="p-1.5 text-white hover:bg-white/20 rounded-full transition" aria-label="Download Image"><DownloadIcon /></button>
             </div>
         </div>
