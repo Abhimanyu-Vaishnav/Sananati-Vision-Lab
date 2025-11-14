@@ -1,0 +1,7 @@
+{
+  "name": "Sanatani Vision Lab",
+  "description": "An advanced image manipulation and analysis application powered by the Gemini API. Users can edit photos with text prompts, analyze image content, and use a 'Time-Travel Booth' to place their faces in historical Indian and Sanatani scenes.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
