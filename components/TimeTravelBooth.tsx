@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useMemo, useContext } from 'react';
 import ImageUploader from './ImageUploader';
 import Spinner from './Spinner';
 import ZoomableImage from './ZoomableImage';
 import { fileToBase64, editImage } from '../services/geminiService';
+import { SettingsContext } from '../contexts/SettingsContext';
 
 const SCENES = [
     "A Vedic-era Gurukul",
@@ -25,6 +27,7 @@ const SCENES = [
 ];
 
 const TimeTravelBooth: React.FC = () => {
+    const { settings } = useContext(SettingsContext);
     const [userImage, setUserImage] = useState<File | null>(null);
     const [selectedScene, setSelectedScene] = useState<string>(SCENES[0]);
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -56,7 +59,7 @@ const TimeTravelBooth: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(userImage);
-            const resultBase64 = await editImage(base64Image, userImage.type, prompt);
+            const resultBase64 = await editImage(settings.apiKey, base64Image, userImage.type, prompt);
             setGeneratedImage(`data:image/png;base64,${resultBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');

@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useMemo, useContext } from 'react';
 import ImageUploader from './ImageUploader';
 import Spinner from './Spinner';
 import ZoomableImage from './ZoomableImage';
 import { fileToBase64, editImage } from '../services/geminiService';
+import { SettingsContext } from '../contexts/SettingsContext';
 
 const QUICK_FILTERS = [
     { name: 'Grayscale', prompt: 'Convert the image to black and white grayscale.' },
@@ -15,6 +17,7 @@ const QUICK_FILTERS = [
 
 
 const ImageEditor: React.FC = () => {
+    const { settings } = useContext(SettingsContext);
     const [originalImage, setOriginalImage] = useState<File | null>(null);
     const [prompt, setPrompt] = useState<string>('');
     const [editedImage, setEditedImage] = useState<string | null>(null);
@@ -50,7 +53,7 @@ const ImageEditor: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(originalImage);
-            const editedImageBase64 = await editImage(base64Image, originalImage.type, finalPrompt);
+            const editedImageBase64 = await editImage(settings.apiKey, base64Image, originalImage.type, finalPrompt);
             setEditedImage(`data:image/png;base64,${editedImageBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');

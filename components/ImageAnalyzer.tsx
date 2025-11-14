@@ -1,7 +1,9 @@
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useMemo, useContext } from 'react';
 import ImageUploader from './ImageUploader';
 import Spinner from './Spinner';
 import { fileToBase64, analyzeImage } from '../services/geminiService';
+import { SettingsContext } from '../contexts/SettingsContext';
 
 interface AnalysisHistoryEntry {
     id: number;
@@ -12,6 +14,7 @@ interface AnalysisHistoryEntry {
 }
 
 const ImageAnalyzer: React.FC = () => {
+    const { settings } = useContext(SettingsContext);
     const [image, setImage] = useState<File | null>(null);
     const [prompt, setPrompt] = useState<string>('Describe this image in detail.');
     const [analysis, setAnalysis] = useState<string | null>(null);
@@ -31,7 +34,7 @@ const ImageAnalyzer: React.FC = () => {
 
         try {
             const base64Image = await fileToBase64(imageToAnalyze);
-            const result = await analyzeImage(base64Image, imageToAnalyze.type, promptToUse);
+            const result = await analyzeImage(settings.apiKey, base64Image, imageToAnalyze.type, promptToUse);
             setAnalysis(result);
 
             const newEntry: AnalysisHistoryEntry = {

@@ -1,15 +1,20 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { AppMode } from './types';
 import ImageEditor from './components/ImageEditor';
 import ImageAnalyzer from './components/ImageAnalyzer';
 import TimeTravelBooth from './components/TimeTravelBooth';
 import ImageCreator from './components/ImageCreator';
-import { CreatorIcon, EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon } from './components/icons';
+import { CreatorIcon, EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon, SettingsIcon } from './components/icons';
+import { SettingsProvider, SettingsContext } from './contexts/SettingsContext';
+import SettingsModal from './components/SettingsModal';
+import ApiKeyPrompt from './components/ApiKeyPrompt';
 
-const App: React.FC = () => {
+const AppContainer: React.FC = () => {
     const [mode, setMode] = useState<AppMode>(AppMode.Creator);
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const { settings } = useContext(SettingsContext);
 
     useEffect(() => {
         const root = window.document.documentElement;
@@ -46,12 +51,17 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen bg-[#FFF8E1] dark:bg-[#1C160C] text-[#1C160C] dark:text-white font-sans transition-colors duration-300">
             <div className="container mx-auto px-4 py-8">
-                <header className="relative text-center mb-8">
-                    <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
-                        Sanatani Vision Lab
-                    </h1>
-                    <p className="mt-2 text-amber-900/80 dark:text-slate-400">Create, edit, and analyze images with the power of AI.</p>
-                    <button onClick={toggleTheme} className="absolute top-0 right-0 p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition">
+                <header className="relative flex justify-between items-center mb-8">
+                    <button onClick={() => setIsSettingsOpen(true)} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Settings">
+                        <SettingsIcon />
+                    </button>
+                    <div className="text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                        <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
+                            Sanatani Vision Lab
+                        </h1>
+                        <p className="mt-2 text-amber-900/80 dark:text-slate-400">Create, edit, and analyze images with the power of AI.</p>
+                    </div>
+                    <button onClick={toggleTheme} className="p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition" aria-label="Toggle Theme">
                         {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                     </button>
                 </header>
@@ -74,16 +84,26 @@ const App: React.FC = () => {
                         ))}
                     </nav>
 
-                    <main>
-                        {renderContent()}
+                    <main className="relative">
+                        {!settings.apiKey && <ApiKeyPrompt onOpenSettings={() => setIsSettingsOpen(true)} />}
+                        <div className={!settings.apiKey ? 'blur-sm pointer-events-none' : ''}>
+                            {renderContent()}
+                        </div>
                     </main>
                 </div>
                  <footer className="text-center mt-8 text-amber-900/60 dark:text-slate-500 text-sm">
                     <p>Powered by Sanatani AI. UI designed for clarity and function.</p>
                 </footer>
             </div>
+            <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
         </div>
     );
 };
+
+const App: React.FC = () => (
+    <SettingsProvider>
+        <AppContainer />
+    </SettingsProvider>
+);
 
 export default App;

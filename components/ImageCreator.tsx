@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import Spinner from './Spinner';
 import ZoomableImage from './ZoomableImage';
 import { generateImage } from '../services/geminiService';
+import { SettingsContext } from '../contexts/SettingsContext';
 
 const ImageCreator: React.FC = () => {
+    const { settings } = useContext(SettingsContext);
     const [prompt, setPrompt] = useState<string>('');
     const [generatedImage, setGeneratedImage] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -20,7 +22,7 @@ const ImageCreator: React.FC = () => {
         setGeneratedImage(null);
 
         try {
-            const generatedImageBase64 = await generateImage(prompt.trim());
+            const generatedImageBase64 = await generateImage(settings.apiKey, prompt.trim());
             setGeneratedImage(`data:image/png;base64,${generatedImageBase64}`);
         } catch (err) {
             setError(err instanceof Error ? err.message : 'An unknown error occurred.');
