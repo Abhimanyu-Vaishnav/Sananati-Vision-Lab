@@ -4,10 +4,11 @@ import { AppMode } from './types';
 import ImageEditor from './components/ImageEditor';
 import ImageAnalyzer from './components/ImageAnalyzer';
 import TimeTravelBooth from './components/TimeTravelBooth';
-import { EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon } from './components/icons';
+import ImageCreator from './components/ImageCreator';
+import { CreatorIcon, EditIcon, AnalyzeIcon, TimeTravelIcon, SunIcon, MoonIcon } from './components/icons';
 
 const App: React.FC = () => {
-    const [mode, setMode] = useState<AppMode>(AppMode.Editor);
+    const [mode, setMode] = useState<AppMode>(AppMode.Creator);
     const [theme, setTheme] = useState<'light' | 'dark'>('dark');
 
     useEffect(() => {
@@ -22,6 +23,8 @@ const App: React.FC = () => {
 
     const renderContent = () => {
         switch (mode) {
+            case AppMode.Creator:
+                return <ImageCreator />;
             case AppMode.Editor:
                 return <ImageEditor />;
             case AppMode.Analyzer:
@@ -29,11 +32,12 @@ const App: React.FC = () => {
             case AppMode.TimeTravel:
                 return <TimeTravelBooth />;
             default:
-                return <ImageEditor />;
+                return <ImageCreator />;
         }
     };
 
     const navItems = [
+        { id: AppMode.Creator, label: 'Creator', icon: <CreatorIcon /> },
         { id: AppMode.Editor, label: 'Image Editor', icon: <EditIcon /> },
         { id: AppMode.Analyzer, label: 'Image Analyzer', icon: <AnalyzeIcon /> },
         { id: AppMode.TimeTravel, label: 'Time-Travel Booth', icon: <TimeTravelIcon /> },
@@ -46,7 +50,7 @@ const App: React.FC = () => {
                     <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-yellow-500">
                         Sanatani Vision Lab
                     </h1>
-                    <p className="mt-2 text-amber-900/80 dark:text-slate-400">Edit, analyze, and transform images with the power of AI.</p>
+                    <p className="mt-2 text-amber-900/80 dark:text-slate-400">Create, edit, and analyze images with the power of AI.</p>
                     <button onClick={toggleTheme} className="absolute top-0 right-0 p-2 rounded-full text-amber-600 dark:text-amber-300 hover:bg-amber-200/50 dark:hover:bg-amber-800/50 transition">
                         {theme === 'light' ? <MoonIcon /> : <SunIcon />}
                     </button>

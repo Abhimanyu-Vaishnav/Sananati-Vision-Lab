@@ -21,6 +21,34 @@ export const fileToBase64 = (file: File): Promise<string> => {
     });
 };
 
+export const generateImage = async (prompt: string): Promise<string> => {
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash-image',
+            contents: {
+                parts: [
+                    {
+                        text: prompt,
+                    },
+                ],
+            },
+            config: {
+                responseModalities: [Modality.IMAGE],
+            },
+        });
+        
+        for (const part of response.candidates[0].content.parts) {
+            if (part.inlineData) {
+                return part.inlineData.data;
+            }
+        }
+        throw new Error("No image data found in response");
+    } catch (error) {
+        console.error("Error generating image:", error);
+        throw new Error("Failed to generate image with Gemini API.");
+    }
+};
+
 export const editImage = async (base64Image: string, mimeType: string, prompt: string): Promise<string> => {
     try {
         const response = await ai.models.generateContent({

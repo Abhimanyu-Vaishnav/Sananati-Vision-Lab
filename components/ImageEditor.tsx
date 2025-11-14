@@ -4,6 +4,16 @@ import Spinner from './Spinner';
 import ZoomableImage from './ZoomableImage';
 import { fileToBase64, editImage } from '../services/geminiService';
 
+const QUICK_FILTERS = [
+    { name: 'Grayscale', prompt: 'Convert the image to black and white grayscale.' },
+    { name: 'Sepia', prompt: 'Apply a warm, brownish sepia tone to the image.' },
+    { name: 'Vintage', prompt: 'Give the image a faded, vintage photograph look from the 1970s.' },
+    { name: 'Cinematic', prompt: 'Apply a cinematic color grade with high contrast and teal and orange tones.' },
+    { name: 'Vibrant', prompt: 'Enhance the colors to make them more vibrant and saturated.' },
+    { name: 'Watercolor', prompt: 'Transform the image to look like a watercolor painting.' },
+];
+
+
 const ImageEditor: React.FC = () => {
     const [originalImage, setOriginalImage] = useState<File | null>(null);
     const [prompt, setPrompt] = useState<string>('');
@@ -48,6 +58,10 @@ const ImageEditor: React.FC = () => {
             setIsLoading(false);
         }
     };
+
+    const handleFilterClick = (filterPrompt: string) => {
+        setPrompt(prev => prev ? `${prev.trim()} ${filterPrompt}` : filterPrompt);
+    };
     
     const inputClasses = "w-full p-2 bg-white dark:bg-[#382d1f] border border-amber-300 dark:border-amber-700 rounded-md text-[#1C160C] dark:text-slate-200 placeholder-amber-900/50 dark:placeholder-slate-500 focus:ring-1 focus:ring-[#F4C430] focus:border-[#F4C430] transition";
 
@@ -64,6 +78,20 @@ const ImageEditor: React.FC = () => {
                             placeholder="e.g., 'Add a retro filter', 'Make the sky look like a sunset', 'Remove the person in the background'"
                             className="w-full h-28 p-3 bg-white dark:bg-[#2a2216] border border-amber-300 dark:border-amber-800 rounded-lg text-[#1C160C] dark:text-slate-200 placeholder-amber-900/50 dark:placeholder-slate-500 focus:ring-2 focus:ring-[#F4C430] focus:border-[#F4C430] transition"
                         />
+                    </div>
+                    <div className="pt-2">
+                        <h4 className="text-sm font-semibold text-amber-900/80 dark:text-slate-400 mb-2">Or apply a quick filter:</h4>
+                        <div className="flex flex-wrap gap-2">
+                            {QUICK_FILTERS.map((filter) => (
+                                <button
+                                    key={filter.name}
+                                    onClick={() => handleFilterClick(filter.prompt)}
+                                    className="px-3 py-1 text-xs font-medium rounded-full transition bg-amber-100 hover:bg-amber-200 text-amber-900 dark:bg-[#382d1f] dark:hover:bg-[#4a3c29] dark:text-slate-300"
+                                >
+                                    {filter.name}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold text-amber-900 dark:text-slate-300 mb-2 border-t border-amber-200 dark:border-amber-800/50 pt-4">
